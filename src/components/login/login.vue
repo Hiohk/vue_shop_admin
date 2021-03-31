@@ -38,6 +38,7 @@ export default {
           meta:{msg,status}
         } = res.data
           if (status === 200) {
+            localStorage.setItem('token',data.token)//在登录成功是，保存正确登录用户的token
             this.$router.push({name: 'home'})
             this.$message.success(msg)
           }
