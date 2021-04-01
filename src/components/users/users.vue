@@ -330,7 +330,7 @@ export default {
       const res = await this.$http.put(`users/${this.currentUserId}/role`,{
         rid: this.currentRoleId
       });
-      // console.log(res);
+      console.log(res);
       this.dialogFormVisibleRole = false;
     }
   }
