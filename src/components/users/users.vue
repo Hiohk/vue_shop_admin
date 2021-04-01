@@ -55,6 +55,7 @@
         label="用户状态">
         <template slot-scope="scope">
           <el-switch
+            @change="changeMsgState(scope.row)"
             v-model="scope.row.mg_state"
             active-color="#13ce66"
             inactive-color="#ff4949">
@@ -70,7 +71,7 @@
             type="primary" 
             icon="el-icon-edit" 
             circle
-            @click="showEditUserMessage()"
+            @click="showEditUserMessage(scope.row)"
             ></el-button>
             <el-button 
             plain 
@@ -79,7 +80,12 @@
             circle
             @click="showDeleteUserMessage(scope.row.id)"
             ></el-button>
-            <el-button plain type="success" icon="el-icon-check" circle></el-button>
+            <el-button
+            @click="showSetUserRole(scope.row)" 
+            plain 
+            type="success" 
+            icon="el-icon-check" 
+            circle></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -117,7 +123,7 @@
   <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
     <el-form :model="form">
       <el-form-item label="用户名" label-width="80px">
-        <el-input v-model="form.username" autocomplete="off"></el-input>
+        <el-input disabled v-model="form.username" autocomplete="off"></el-input>
       </el-form-item>
       <el-form-item label="邮箱" label-width="80px">
         <el-input v-model="form.email" autocomplete="off"></el-input>
@@ -128,9 +134,30 @@
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
-      <el-button type="primary" @click="dialogFormVisibleEdit = false">确 定</el-button>
+      <el-button type="primary" @click="editUser()">确 定</el-button>
     </div>
   </el-dialog>
+  <!-- 分配角色的对话框 -->
+  <el-dialog title="分配角色" :visible.sync="dialogFormVisibleRole">
+  <el-form :model="form">
+    <el-form-item label="用户名:" label-width="100px">
+      {{currentUsername}}
+    </el-form-item>
+    <el-form-item label="角色" label-width="100px">
+      <el-select v-model="currentRoleId">
+        <el-option label="请选择" :value="-1"></el-option>
+        <el-option :label="item.roleName" :value="item.id"
+        v-for="(item,i) in roles" :key="i">
+        <!-- 当改变label时，然后value的值也跟着改变，最后v-model绑定的数据也跟着改变 -->
+        </el-option>
+      </el-select>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisibleRole = false">取 消</el-button>
+    <el-button type="primary" @click="setRole()">确 定</el-button>
+  </div>
+</el-dialog>
   </el-card>
 </template>
 
@@ -144,6 +171,7 @@ export default {
       total: -1,
       dialogFormVisibleAdd: false,//添加对话框属性
       dialogFormVisibleEdit: false,
+      dialogFormVisibleRole: false,
       userList: [
         {
           username: '王小虎',
@@ -175,7 +203,14 @@ export default {
           password: '',
           email: '',
           mobile: ''
-      }
+      },
+      currentRoleId: -1,
+      currentUserId: -1,
+      currentUsername: '',
+      //角色数据
+      roles: [
+        
+      ]
     }
   },
   created() {
@@ -221,6 +256,7 @@ export default {
       this.getUserList()
     },
     showAddUserDiag() {
+      this.form = {};
       this.dialogFormVisibleAdd = true;
     },
     async addUser() {
@@ -234,6 +270,7 @@ export default {
         //清空文本框
         this.form = {}
         //关闭对话框？？
+        this.dialogFormVisibleAdd = false;
       } else {
         this.$message.warning(msg);
       }
@@ -260,8 +297,41 @@ export default {
         });          
       });
     },
-    showEditUserMessage() {
+    showEditUserMessage(user) {
+      this.form = user;//获取用户信息
       this.dialogFormVisibleEdit = true;
+    },
+    async editUser() {
+      const res = await this.$http.delete(`users/${this.form.id}`,this.form);
+      this.dialogFormVisibleEdit = false;//关闭对话框
+      this.getUserList();//更新视图
+      this.$message.success('修改成功');
+    },
+    //修改用户状态
+    async changeMsgState(user) {
+      const res = await this.$http.put(`users/${user.id}/state/${user.mg_state}`);
+      console.log(res);
+    },
+    //分配角色
+    async showSetUserRole(user) {
+      this.currentUsername = user.username;
+      this.currentUserId = user.id;
+      //获取所有的角色
+      const res1 = await this.$http.get(`roles`);
+      this.roles = res1.data.data;
+      // console.log(res1);
+      const res = await this.$http.get(`users/${user.id}`);
+      console.log(res) 
+      this.currentRoleId = res.data.data.rid; 
+      this.dialogFormVisibleRole = true;
+    },
+    //设置角色
+    async setRole() {
+      const res = await this.$http.put(`users/${this.currentUserId}/role`,{
+        rid: this.currentRoleId
+      });
+      // console.log(res);
+      this.dialogFormVisibleRole = false;
     }
   }
 }
