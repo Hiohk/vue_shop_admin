@@ -9,16 +9,19 @@ import '@/assets/css/reset.css'
 import axios from 'axios'
 import MyServerHttp from '@/plugins/http.js'
 import moment from 'moment'
+import MyBread from '@/components/custom/myBread.vue'
 
 // Vue.prototype.$axios = axios
 Vue.use(ElementUI)
 Vue.config.productionTip = false
 Vue.use(MyServerHttp)//安装插件
 
-//全局过滤器
+//全局过滤器,处理日期
 Vue.filter('fmtDate',(v)=>{
   return moment(v).form('YYYY-MM-DD')
 }) 
+//全局自定义组件
+Vue.component('my-bread',MyBread)
 
 /* eslint-disable no-new */
 new Vue({

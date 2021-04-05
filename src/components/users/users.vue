@@ -1,11 +1,7 @@
 <template>
   <!-- 面包屑，搜索框，表格，分页四部分 -->
   <el-card class="box-card">
-    <el-breadcrumb separator-class="el-icon-arrow-right">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    <my-bread level1="用户管理" level2="用户列表"></my-bread>
     <el-row class="searchRow">
       <el-col>
         <el-input
@@ -221,8 +217,9 @@ export default {
     //接口文档中，除了登录之外的所有请求都需要进行授权，设置请求头
     async getUserList() {
 
-      const AUTH_TOKEN = localStorage.getItem('token');
-      this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+      // const AUTH_TOKEN = localStorage.getItem('token');
+      // this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN;
+      console.log('发起请求');
       const res = await this.$http.get(`users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`,)
       console.log(res);
       const {meta:{status,msg},data:{users,total}} = res.data;
