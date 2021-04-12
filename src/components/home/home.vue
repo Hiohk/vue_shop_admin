@@ -27,15 +27,21 @@
         active-text-color= '#409EFF'
         :router="true"
         >
-          <el-submenu index="users">
+          <el-submenu :index="''+item1.order" v-for="(item1,index1) in menus" :key="index1">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>{{item1.authName}}</span>
             </template>
-            <el-menu-item index="users"><i class="el-icon-user-solid"></i><span>用户列表</span></el-menu-item>
+            <el-menu-item 
+            :index="item2.path"
+            v-for="(item2,index2) in item1.children"
+            :key="index2">
+              <i class="el-icon-user-solid"></i>
+              <span>{{item2.authName}}</span>
+            </el-menu-item>
           </el-submenu>
 
-          <el-submenu index="2">
+          <!-- <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>权限管理</span>
@@ -68,7 +74,7 @@
               <span>数据统计</span>
             </template>
             <el-menu-item index="5-1"><i class="el-icon-s-management"></i><span>数据报表</span></el-menu-item>
-          </el-submenu>
+          </el-submenu> -->
         </el-menu>
       </el-aside>
       <el-main class="main">
@@ -81,18 +87,34 @@
 
 <script>
 export default {
-  //创建新实例之前自动触发该方法
-  // beforeCreate() {
-  //   const token = localStorage.getItem('token')
-  //   if (!token) {
-  //     this.$router.push({name: 'login'})
-  //   }
-  // }
+  data() {
+    return {
+      menus: []
+    }
+  },
+  // 创建新实例之前自动触发该方法
+  //
+  beforeCreate() {
+    const token = localStorage.getItem('token')
+    //没有token，需要进行登录
+    if (!token) {
+      this.$router.push({name: 'login'})
+    }
+  },
+  created() {
+      this.getMenus()
+  },
   methods: {
     handleSignout() {
       localStorage.clear()//清除token
       this.$message.success('退出成功')
       this.$router.push({name: 'login'})
+    },
+    //获取导航数据
+    async getMenus() {
+      const res = await this.$http.get(`menus`)
+      console.log(res);
+      this.menus = res.data.data
     }
   }
 }

@@ -6,10 +6,12 @@ import Home from '@/components/home/home.vue'
 import Users from '@/components/users/users.vue'
 import Right from '@/components/rights/right.vue'
 import Role from '@/components/rights/role.vue'
+import {Message} from 'element-ui'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -30,8 +32,8 @@ export default new Router({
         component: Right
       },
       {
-        name: 'role',
-        path: '/role',
+        name: 'roles',
+        path: '/roles',
         component: Role
       }]
     },
@@ -42,3 +44,20 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to,from,next) => {
+  if(to.path == '/login') {
+    next()
+  } else {
+    const token = localStorage.getItem('token')
+    //没有token，需要进行登录
+    if (!token) {
+      Message.warning('请先登录')
+      router.push({name: 'login'})
+      return 
+    }
+    next()
+  }
+
+})
+export default router
