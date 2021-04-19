@@ -36,7 +36,14 @@
             :index="item2.path"
             v-for="(item2,index2) in item1.children"
             :key="index2">
-              <i class="el-icon-user-solid"></i>
+              <span v-if="item2.authName==='用户列表'"><i class="el-icon-user-solid"></i></span>
+              <span v-else-if="item2.authName==='角色列表'"><i class="el-icon-menu"></i></span>
+              <span v-else-if="item2.authName==='权限列表'"><i class="el-icon-menu"></i></span>
+              <span v-else-if="item2.authName==='商品列表'"><i class="el-icon-menu"></i></span>
+              <span v-else-if="item2.authName==='分类参数'"><i class="el-icon-menu"></i></span>
+              <span v-else-if="item2.authName==='商品分类'"><i class="el-icon-menu"></i></span>
+              <span v-else-if="item2.authName==='订单列表'"><i class="el-icon-s-order"></i></span>
+              <span v-else-if="item2.authName==='数据报表'"><i class="el-icon-s-management"></i></span>
               <span>{{item2.authName}}</span>
             </el-menu-item>
           </el-submenu>
