@@ -42,9 +42,9 @@
         prop="create_time"
         label="创建日期"
         width="180">
-        <!-- <template slot-scope="userList">
+        <template slot-scope="userList">
           {{userList.row.create_time | fmtDate}}    
-        </template> -->
+        </template>
       </el-table-column>
       <el-table-column
         prop="mg_state"

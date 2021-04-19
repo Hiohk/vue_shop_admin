@@ -20,7 +20,7 @@
         <el-table-column label="商品重量" prop="goods_weight" width="70px"></el-table-column>
         <el-table-column label="商品数量" prop="goods_number" width="70px"></el-table-column>
         <el-table-column label="创建时间" prop="add_time" width="140px">
-          <!-- <template slot-scope="scope">{{scope.row.add_time | dataFormat }}</template> -->
+          <template slot-scope="scope">{{scope.row.add_time | fmtDate }}</template>
         </el-table-column>
         <el-table-column label="操作" width="130px">
           <template slot-scope="scope">

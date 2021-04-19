@@ -18,7 +18,7 @@ Vue.use(MyServerHttp)//安装插件
 
 //全局过滤器,处理日期
 Vue.filter('fmtDate',(v)=>{
-  return moment(v).form('YYYY-MM-DD')
+  return moment(v).format('YYYY-MM-DD')
 }) 
 //全局自定义组件
 Vue.component('my-bread',MyBread)
